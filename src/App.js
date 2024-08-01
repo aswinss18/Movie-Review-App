@@ -2,6 +2,7 @@ import { useEffect, useInsertionEffect, useRef, useState } from "react";
 import "./App.css";
 import StarRating from "./StarRating";
 import { useMovies } from "./useMovies";
+import { useLocalStorageState } from "./useLocalStorageState";
 const tempMovieData = [
   {
     imdbID: "tt1375666",
@@ -55,11 +56,12 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const { movies, error, isLoading } = useMovies(query, handleCloseMovie);
+  const [watched, setWatched] = useLocalStorageState([], "watched");
 
-  const [watched, setWatched] = useState(function () {
-    const storedValue = localStorage.getItem("watched");
-    return JSON.parse(storedValue);
-  });
+  // const [watched, setWatched] = useState(function () {
+  //   const storedValue = localStorage.getItem("watched");
+  //   return JSON.parse(storedValue);
+  // });
 
   function handleSelectMovie(id) {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
@@ -76,12 +78,12 @@ export default function App() {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
   }
 
-  useEffect(
-    function () {
-      localStorage.setItem("watched", JSON.stringify(watched));
-    },
-    [watched]
-  );
+  // useEffect(
+  //   function () {
+  //     localStorage.setItem("watched", JSON.stringify(watched));
+  //   },
+  //   [watched]
+  // );
 
   return (
     <>
@@ -378,11 +380,16 @@ function MovieDetails({ selectedId, onCloseMovie, onAddWatched, watched }) {
                     size={24}
                     onSetRating={setUserRating}
                   />
-                  {userRating > 0 && (
+                  {/* {userRating > 0 ? (
                     <button className="btn-add" onClick={handleAdd}>
                       + Add to list
                     </button>
-                  )}
+                  ) : (
+                    ""
+                  )} */}
+                  <button className="btn-add" onClick={handleAdd}>
+                    + Add to list
+                  </button>
                 </>
               ) : (
                 <p>
